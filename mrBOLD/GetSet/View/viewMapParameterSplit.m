@@ -18,6 +18,7 @@ if isempty(DictViewSplit)
     DictViewSplit('anatomycurrentslice') = 'anatomy';
     DictViewSplit('anatomymap') =  'anatomy';
     DictViewSplit('anatomynifti') =  'anatomy';
+    DictViewSplit('inplaneorientation') =  'anatomy';
     DictViewSplit('anatsize') =  'anatomy';
     DictViewSplit('anatsizexyz') =  'anatomy';
     DictViewSplit('anatslicedim') =  'anatomy';
@@ -87,6 +88,7 @@ if isempty(DictViewSplit)
     DictViewSplit('roiindices') =  'roi';
     DictViewSplit('roimodified') =  'roi';
     DictViewSplit('roiname') =  'roi';
+    DictViewSplit('roicomments') =  'roi';    
     DictViewSplit('roioptions') =  'roi';
     DictViewSplit('rois') =  'roi';
     DictViewSplit('roistodisplay') =  'roi';

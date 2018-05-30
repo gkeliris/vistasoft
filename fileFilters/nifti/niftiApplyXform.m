@@ -18,11 +18,15 @@ function [nii] = niftiApplyXform(nii,xform)
 %
 % Copyright Stanford VistaLab 2013
 
-
 xformLocal = xform(1:3,1:3);
 
 if(all(all(xformLocal == eye(3))))
-    fprintf('The transform does not need to be applied. Returning nifti without change.\n');
+    if (ispref('VISTA','verbose'))
+        if getpref('VISTA','verbose')>0
+             fprintf('[%s:] The transform does not need to be applied. Returning nifti without change.\n', mfilename); % Only print this if we have asked for verbose reporting
+        end
+    end
+    
     return %No need to do the rest of the calculations
 end %if
 
@@ -39,26 +43,39 @@ dimOrder = [xdim, ydim, zdim];
 nii = niftiSet(nii,'data',permute(niftiGet(nii,'data'),[dimOrder,4,5]));
 
 if (xformLocal(1,xdim)<0)
-    %dimFlip(xdim) = 1;
-    nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),1));
+    %dimFlip(xdim) = 1;    
+    if verLessThan('matlab', '8.2'), 
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),1));
+    else
+        nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),1));
+    end
 end
 
 if (xformLocal(2,ydim)<0)
     %dimFlip(xdim) = 2;
-    nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),2));
+    if verLessThan('matlab', '8.2'), 
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),2));
+    else
+        nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),2));
+    end
 end
 
 if (xformLocal(3,zdim)<0)
     %dimFlip(xdim) = 3;
-    nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),3));
+    if verLessThan('matlab', '8.2'), 
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),3));
+    else    
+        nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),3));
+    end
 end
 
 %Now the permutations on the data are complete, now we can update the
 %struct with the new data
 
 pixDim = niftiGet(nii,'pixdim');
-newPixDim = [pixDim(xdim), pixDim(ydim), pixDim(zdim)];
-nii = niftiSet(nii,'pixdim',newPixDim);
+newPixDim = pixDim;
+newPixDim(1:3) = [pixDim(xdim), pixDim(ydim), pixDim(zdim)];
+nii = niftiSet(nii,'pixdim', newPixDim);
 
 newDim = niftiGet(nii,'dim');
 newSize = size(niftiGet(nii,'data'));
@@ -79,13 +96,15 @@ end
 if (~isempty(niftiGet(nii,'freqdim')) && niftiGet(nii,'freqdim'))
     nii = niftiSet(nii,'freqdim', dimOrder(niftiGet(nii,'freqdim')));
 else
-    warning('No freqdim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
+    fprintf('No freqdim field set in the nifti. Assuming freqdim = 1. Nifti stored at: %s\n', niftiGet(nii,'FName'));
+    nii = niftiSet(nii,'freqdim', 1);
 end
 
 if (~isempty(niftiGet(nii,'phasedim')) && niftiGet(nii,'phasedim'))
     nii = niftiSet(nii,'phasedim', dimOrder(niftiGet(nii,'phasedim')));
 else
-    warning('No phasedim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
+    fprintf('No phasedim field set in the nifti. Assuming phasedim = 2. Nifti stored at: %s\n', niftiGet(nii,'FName'));
+    nii = niftiSet(nii,'phasedim', 2);
 end
 
 if (~isempty(niftiGet(nii,'slicedim')) && niftiGet(nii,'slicedim'))

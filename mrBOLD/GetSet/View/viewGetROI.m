@@ -9,6 +9,12 @@ function val = viewGetROI(vw,param,varargin)
 %
 % We assume that input comes to us already fixed and does not need to be
 % formatted again.
+%
+% Wandell says we should use roiGet/Set/Create and have this function call
+% those.  THe reason is so that we can interact with ROIs and not have to
+% require a whole vw object.
+%
+% Vistasoft Team, many years ago.
 
 if notDefined('vw'), vw = getCurView; end
 if notDefined('param'), error('No parameter defined'); end
@@ -21,8 +27,12 @@ switch param
     
     case 'rois'
         % Return ROIs as struct. Includes all ROIs and all fields
-        %   ROIs = viewGet(vw, 'ROIs');
-        val = vw.ROIs;
+        %   ROIs = viewGet(vw, 'ROIs', [roiVector]);
+        if  ~isempty(varargin), % check whether user specified ROIs
+            val = vw.ROIs(varargin{1});
+        else
+            val = vw.ROIs;
+        end
     case 'roistruct'
         % Return selected or specified ROI as struct.
         %   ROI = viewGet(vw, 'ROI struct');
@@ -94,6 +104,15 @@ switch param
         else                                          roi = varargin{1};end
         if numel(vw.ROIs) == 0, val = [];
         else                    val = vw.ROIs(roi).name;        end
+        
+    case 'roicomments'
+        % Return the comments of the currently selected or the requested ROI.
+        %   roiComments = viewGet(vw, 'ROI comments');
+        %   roi = 1; roiComments = viewGet(vw, 'ROI comments', roi);
+        if isempty(varargin) || isempty(varargin{1}), roi = vw.selectedROI;
+        else                                          roi = varargin{1};end
+        if numel(vw.ROIs) == 0, val = [];
+        else                    val = vw.ROIs(roi).comments;   end
         
     case 'roimodified'
         % Return the modification date of the currently selected or the

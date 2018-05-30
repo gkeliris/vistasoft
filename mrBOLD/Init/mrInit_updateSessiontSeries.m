@@ -29,14 +29,17 @@ try
     %Now that we have the number of scans, we know how many tSeries nifti
     %files we will need to create
     
-    inplaneBasePath = fullfile(pwd,'Inplane');
+    % Use local paths, not absolute paths
+    % inplaneBasePath = fullfile(pwd,'Inplane');
+    inplaneBasePath = 'Inplane';
+    
     
     for dtNum = 1:numel(dataTYPES)
         fprintf('Starting dataTYPE number %d\n', dtNum);
         tSeriesOutPath = fullfile(inplaneBasePath, dtGet(dataTYPES(dtNum),'Name'));
         tSeriesInBasePath = fullfile(tSeriesOutPath,'TSeries');
         
-        if exist(fullfile(tSeriesInBasePath,'Scan1','tSeries1.mat'),'file');
+        if exist(fullfile(tSeriesInBasePath,'Scan1','tSeries1.mat'),'file')
             %Checks to see if there is any inplane tSeries data in this
             %dataTYPE if there is, then does all of the processing
             
@@ -53,12 +56,27 @@ try
                 dimSize = [dtGet(dataTYPES(dtNum),'N Frames', scan) dtGet(dataTYPES(dtNum),'Func Size', scan) dtGet(dataTYPES(dtNum),'N Slices', scan)];
                 tSeries = zeros(dimSize);
                 for slice = 1:numSlices
-                    tSeriesInFile = fullfile(tSeriesInFolder,['tSeries' num2str(slice) '.mat']);
+                    tSeriesInFile = fullfile(HOMEDIR, tSeriesInFolder,['tSeries' num2str(slice) '.mat']);
                     tSeriesIn = load(tSeriesInFile);
                     tSeriesIn = reshape(tSeriesIn.tSeries, dimSize(1:3));
                     tSeries(:,:,:,slice) = tSeriesIn;
                 end %for
+                
+                % The following transform will preserve the orientation of the data
+                % across the migration, such that inplane to vAnatomy xforms do not
+                % need to change, nor do parameter maps, ROIs, etc. The permute([2 1])
+                % followed by flipdim(2) effectively converts from x/y coordinates to
+                % row/column coordinates. The reason we do this is that the old
+                % vistasoft (prior to the move to NIFTIs) did this transform when
+                % showing the slices as images, whereas the current code simply pulls
+                % the data array from a nifti (after applying a standard xform to the
+                % nifti), and uses an image tool such as imagesc slice by slice without
+                % re-orienting the array. Since we no longer do this xform each time we
+                % show the data, we must do it here as part of the migration if want
+                % the migrated data to appear the same way as the pre-migrated data.
+                % See also mrInit_updateInplaneSession.m.
                 tSeries = permute(tSeries,[3 2 4 1]); %Standard format: freq phase slice time
+                tSeries = flip(tSeries, 2);
                 %Note: this needed to be changed to reflect the fact that
                 %MATLAB stores values row, column, etc. and not column,
                 %row,
@@ -104,7 +122,10 @@ try
                 save('mrSESSION.mat', 'mrSESSION','-append');
                 save('mrSESSION.mat', 'dataTYPES','-append');
                 
-                writeFileNifti(nii);
+                % we already wrote the nifti 4 lines above. this is
+                % redundant.
+                %   writeFileNifti(nii);
+                
                 fprintf('Finished scan number %d\n', scan)
             end %for
             

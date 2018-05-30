@@ -26,7 +26,7 @@ frameRate   = viewGet(vw, 'frameRate', scan);
 nFrames     = viewGet(vw, 'nFrames', scan);
 
 % Select ROIs
-[selectedROIs nROIs] = roiGetList(vw, ROIlist);
+[selectedROIs, nROIs] = roiGetList(vw, ROIlist);
 
 ROIcoords = cell(1,nROIs);
 for r=1:nROIs
@@ -54,14 +54,12 @@ set(gcf,'Name',headerStr);
 % pre-compute the y axis limits
 maxY=0;
 for t=1:nROIs
-    
     if (max(abs(tSeries{t}))>maxY)
         maxY=max(abs(tSeries{t}));
     end
 end
 
 maxY=ceil(maxY+maxY/5);
-
 for r=1:nROIs
     
     % check to see whether we will plot the multiple ROIs as mulitple
@@ -69,7 +67,7 @@ for r=1:nROIs
     if ~sameaxis, subplot(nROIs,1,r); end
     
     t = linspace(0,(nFrames-1)*frameRate,nFrames)';
-    p = plot(t,tSeries{r},'LineWidth',2);
+    p = plot(t,tSeries{r}, 'LineWidth', 2);
     % set the line color to be the same as the ROI color 
     set(p,'Color',vw.ROIs(selectedROIs(r)).color);
     % but if the line color and plot color are the same, the line will be
@@ -83,8 +81,7 @@ for r=1:nROIs
         fontSize=6;
     end
     
-    nTicks = size(tSeries,1);
-    xtick = [0:nFrames*frameRate/nCycles:nFrames*frameRate];
+    xtick = 0:nFrames*frameRate/nCycles:nFrames*frameRate;
     set(gca,'xtick',xtick)
     
     set(gca,'FontSize',fontSize)
@@ -108,10 +105,12 @@ for r=1:nROIs
 
     grid on
     
-    %Save the data in gca('UserData')
-    data.frameNumbers = t;
-    data.tSeries = tSeries{r};
-    set(gca,'UserData',data);
 end
 
+
+%Save the data in gca('UserData')
+data.frameNumbers = t;
+data.tSeries = tSeries;
+set(gca,'UserData',data);
+    
 if sameaxis, legend(tmp); end

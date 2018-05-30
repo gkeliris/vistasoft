@@ -77,6 +77,20 @@ switch param
         else dt.scanParams(varargin{1}).nFrames = val;
         end
         
+    case {'tr' 'framedur' 'frameduration' 'frameperiod'}
+        % dt = dtSet(dt,'tr',1.5,scan)
+        if isempty(varargin), dt.scanParams(:).framePeriod = val;
+        else dt.scanParams(varargin{1}).framePeriod = val;
+        end
+        
+        
+    case {'withinscanmotion'}
+        % nFrames = dtGet(dt, 'nFrames', scan);
+        % dt = dtSet(dt,'withinscanmotion',randn(2, nFrames), scan)
+        if isempty(varargin), dt.scanParams(:).WithinScanMotion = val;
+        else dt.scanParams(varargin{1}).WithinScanMotion = val;
+        end
+        
     case {'rmstimparams','retinomodelparams','retinotopymodelstimulusparams','rmparams','retinotopymodelparams'}
         % dtSet(dt,'rmStimParams',v,scan);
         % Unfortunately, this slot is only the stim params, although it is

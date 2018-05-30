@@ -121,6 +121,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('statisticalmap') = 'map';
     DictViewTranslate('smap') = 'map';
     DictViewTranslate('allmap') = 'map';
+    DictViewTranslate('parmap') = 'map';
+    DictViewTranslate('parametermap') = 'map';
     DictViewTranslate('mapname') = 'mapname';
     DictViewTranslate('mapunits') = 'mapunits';
     DictViewTranslate('mapclip') = 'mapclip';
@@ -152,6 +154,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('anatnifti') = 'anatomynifti';
     DictViewTranslate('niftianat') = 'anatomynifti';
     DictViewTranslate('niftianatomy') = 'anatomynifti';
+    DictViewTranslate('inplaneorientation') = 'inplaneorientation';    
     DictViewTranslate('anatsizexyz') = 'anatsizexyz';
     DictViewTranslate('anatomysizeforclass') = 'anatsizexyz';
     DictViewTranslate('ngraylayers') = 'ngraylayers';
@@ -211,6 +214,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('roimodified') = 'roimodified';
     DictViewTranslate('roidatemodified') = 'roimodified';
     DictViewTranslate('roimodificationdate') = 'roimodified';
+    DictViewTranslate('roicomments') = 'roicomments';    
     DictViewTranslate('prevcoords') = 'prevcoords';
     DictViewTranslate('previouscoordinates') = 'prevcoords';
     DictViewTranslate('previouscoords') = 'prevcoords';
@@ -312,7 +316,11 @@ if isempty(DictViewTranslate)
     DictViewTranslate('currentmeshdata') = 'meshdata';
     DictViewTranslate('selectedmeshdata') = 'meshdata';
     DictViewTranslate('meshn') = 'meshn';
+    DictViewTranslate('meshnum') = 'meshn';
+    DictViewTranslate('meshnumber') = 'meshn';    
     DictViewTranslate('currentmeshn') = 'meshn';
+    DictViewTranslate('currentmeshnum') = 'meshn';    
+    DictViewTranslate('currentmeshnumber') = 'meshn';        
     DictViewTranslate('setcurrentmeshn') = 'meshn';
     DictViewTranslate('curmeshnum') = 'meshn';
     DictViewTranslate('curmeshn') = 'meshn';

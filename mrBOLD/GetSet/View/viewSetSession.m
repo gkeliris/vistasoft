@@ -10,7 +10,7 @@ function vw = viewSetSession(vw,param,val,varargin)
 % We assume that input comes to us already fixed and does not need to be
 % formatted again.
 
-if notDefined('vw'),  error('No view defined.'); end
+if ~exist('vw', 'var'), error('No view defined.'); end
 if notDefined('param'), error('No parameter defined'); end
 if notDefined('val'),   val = []; end
 
@@ -84,10 +84,10 @@ switch param
         
     case 'curscan'
         %vw = setCurScan(vw,val);
-        view.curScan = val;
+        vw.curScan = val;
         % If we have a GUI open, update it as well:
-        if checkfields(view, 'ui', 'scan'),
-            setSlider(view,view.ui.scan,val,0);
+        if checkfields(vw, 'ui', 'scan'),
+            setSlider(vw,vw.ui.scan,val,0);
         end
         
     otherwise

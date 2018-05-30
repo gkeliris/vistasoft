@@ -26,7 +26,8 @@ switch param
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Data');
             otherwise
-                val = vw.anat;
+                if isfield(vw.anat,'data') val = vw.anat.data;
+                else val = vw.anat; end
         end
         
         
@@ -37,6 +38,12 @@ switch param
     case 'anatomynifti'
         %Return the actual nifti struct stored in anat
         val = vw.anat;
+    case 'inplaneorientation'
+        %Return the orientation of the inplane as a 3 letter string (e.g.,
+        %'PRS' for Posterior/Right/Superior as indices increase in dims
+        %1-3)
+        if isfield(vw, 'inplaneOrientation'), val = vw.inplaneOrientation; 
+        else val = []; end               
     case 'anatclip'
         % Return anatomy clipping values from anatMin and anatMax sliders.
         %   anataomyClip = viewGet(vw, 'Anatomy Clip');
@@ -54,7 +61,7 @@ switch param
         switch vw.viewType
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Dim');
-                val = val(1:3);
+                val = double(val(1:3));
             case {'Volume' 'Gray' 'generalGray' 'Flat'}
                 val = size(vw.anat);
         end
@@ -94,6 +101,8 @@ switch param
         switch viewGet(vw,'View Type')
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'anat nifti'),'Pix Dim');
+                % there can only be 3 dimensions of space: take only 3 dimensions of pix dim                
+                val = val(1:3);
             case {'Volume' 'Gray' 'generalGray'}
                 if isfield(vw, 'mmPerVox'),
                     val =  vw.mmPerVox;

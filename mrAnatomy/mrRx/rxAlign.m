@@ -6,7 +6,7 @@ function rx = rxAlign(session,varargin)
 % on mrVista sessions.
 %
 % The argument can either be the path to a mrVista
-% session directory, or a view from an existing 
+% session directory, or a view from an existing
 % directory. If omitted, it assumes you're already
 % in the session directory and starts up a hidden
 % inplane view.
@@ -34,7 +34,7 @@ end
 
 % get vAnatomy / xformed volume
 vANATOMYPATH = getVAnatomyPath(mrSESSION.subject);
-[vol volVoxelSize] = readVolAnat(vANATOMYPATH);
+[vol, volVoxelSize] = readVolAnat(vANATOMYPATH);
 
 % get anatomy / reference volume
 if ~isfield(inplane,'anat') || isempty(inplane.anat)

@@ -5,6 +5,7 @@ function view=filesMenu(view)
 % Set up the callbacks for the FILE menu
 %
 % djh, 1/9/98
+% arw, 06/15/15 Check for altered graphic handle behavior in R2014b onwards
 mrGlobals
 
 % create the file menu
@@ -77,7 +78,12 @@ uimenu(fileMenu,'Label','(Re-)create Readme.txt','Separator','off',...
     'Callback',cb);
 
 % Quit
-cb = ['close(',num2str(view.ui.figNum),'); mrvCleanWorkspace;'];
+if (verLessThan('matlab','8.4')) % Figure handle behavior changed in 2015
+    cb = ['close(',num2str(view.ui.figNum),'); mrvCleanWorkspace;'];
+else
+    cb = ['close(',num2str(view.ui.figNum.Number),'); mrvCleanWorkspace;'];
+end
+
 uimenu(fileMenu,'Label','Quit ','Separator','on', 'Callback',cb);
 
 
@@ -282,7 +288,7 @@ fileMenuRM = uimenu(fileMenu,'Label','Retinotopy Model','Separator','off');
 callBackstr=[view.name ' = rmSelect(',view.name,', 2); ' ...
 		     view.name ' = rmLoadDefault(' view.name '); '];
 uimenu(fileMenuRM, 'Label', 'Select and Load Model', 'Separator', 'off',...
-		'CallBack', callBackstr);
+		'CallBack', callBackstr, 'Accelerator', '8');
 
 % Load retinotopy model parameter in interface
 callBackstr=[view.name ' = rmLoad(' view.name '); '...
